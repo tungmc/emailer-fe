@@ -34,3 +34,9 @@ ng g c workflows/workflow-builder
 ng g m settings --routing --module app.module
 ng g c settings/main  # Hoặc chỉ settings nếu bạn không chia nhỏ
 
+
+
+
+docker-compose restart emailer-fe
+Kiểm tra bằng trình duyệt:
+http://localhost/api/test → nếu trả về "Hello world!" là đã thông Nginx ↔ API backend.

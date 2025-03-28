@@ -1,11 +1,11 @@
 {
-  "name": "ng-ant-design-pro-platform",
+  "name": "mailer-fe",
   "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "dev-local": "node --max_old_space_size=3048 ./node_modules/@angular/cli/bin/ng serve --open",
     "start": "ng serve --open --proxy-config proxy.config.json --host 0.0.0.0",
-    "build": "ng build --configuration production --output-path dist --base-href /ng-ant-design-pro-platform/",
+    "build": "ng build --configuration production --base-href=/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
