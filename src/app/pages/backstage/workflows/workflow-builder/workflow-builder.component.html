@@ -1,0 +1,105 @@
+<!-- workflow-builder.component.html -->
+<div class="workflow-page">
+
+  <div class="mode-banner" *ngIf="workflowId">
+    ✏️ <strong>Chế độ chỉnh sửa:</strong> Đang cập nhật workflow <b>{{ workflowName }}</b>
+  </div>
+
+  <!-- Step header -->
+  <div class="workflow-header-step">
+    <div [class.active]="currentStep === 1" (click)="goToStep(1)">1️⃣ Cấu hình Trigger</div>
+    <div [class.active]="currentStep === 2"
+         [class.disabled]="currentStep === 1"
+         (click)="goToStep(2)">2️⃣ Thiết kế Workflow</div>
+  </div>
+
+
+  <!-- Thân màn hình chia theo step -->
+  <div class="workflow-body">
+    <!-- Left Panel (chỉ hiện khi bước 2) -->
+    <div class="left-panel" *ngIf="currentStep === 2">
+      <div>
+        <h3>🧩 Thêm Step</h3>
+        <div class="step-buttons">
+          <button (click)="addNode('send_email')">📧 Gửi Email</button>
+          <button (click)="addNode('delay')">⏱️ Đợi</button>
+          <button (click)="addNode('add_tag')">🏷️ Thêm Tag</button>
+          <button (click)="addNode('remove_tag')">❌ Xoá Tag</button>
+          <button (click)="addNode('add_to_sequence')">📥 Add to Sequence</button>
+        </div>
+      </div>
+      <div class="action-buttons">
+        <button (click)="createWorkflow()">✅ Tạo Workflow</button>
+        <button (click)="resetWorkflow()">🔄 Reset</button>
+      </div>
+    </div>
+
+    <!-- Canvas chính -->
+    <div class="drawflow" #drawflowElement>
+      <!-- Step 1: Trigger Panel -->
+      <div class="trigger-panel" *ngIf="currentStep === 1">
+        <h4>🎯 Cấu hình Trigger START</h4>
+
+        <label>Tên Workflow:</label>
+        <input type="text" [(ngModel)]="workflowName" placeholder="Nhập tên workflow..." />
+
+        <label>Loại điều kiện:</label>
+        <select [(ngModel)]="newTrigger.conditionType">
+          <option value="">-- Chọn điều kiện --</option>
+          <option *ngFor="let t of triggerTypes" [value]="t.value">{{ t.label }}</option>
+        </select>
+
+        <div *ngIf="newTrigger.conditionType === 'TAG'">
+          <label>Tag:</label>
+          <select [value]="parsedTagId" (change)="handleTagChange($event)">
+            <option *ngFor="let tag of availableTags" [value]="tag.id">{{ tag.name }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="newTrigger.conditionType === 'INACTIVE'">
+          <label>Số ngày không hoạt động:</label>
+          <input type="number" [value]="parsedDays" (input)="handleInactiveChange($event)" />
+        </div>
+
+        <div *ngIf="newTrigger.conditionType === 'INTERACTION'">
+          <label>Hành động:</label>
+          <select [value]="parsedAction" (change)="handleInteractionChange($event)">
+            <option value="OPEN">Mở Email</option>
+            <option value="CLICK">Click Link</option>
+          </select>
+        </div>
+
+        <div *ngIf="newTrigger.conditionType === 'SUBSCRIBED_BEFORE'">
+          <label>Ngày đăng ký trước:</label>
+          <input type="date" [value]="parsedDate" (change)="handleDateChange($event)" />
+        </div>
+
+        <label>Logic:</label>
+        <select [(ngModel)]="newTrigger.logicOperator">
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
+        </select>
+
+        <button (click)="addOrUpdateTrigger()">
+          {{ editIndex !== null ? '✏️ Cập nhật' : '➕ Thêm điều kiện' }}
+        </button>
+
+        <!-- ✅ Preview trigger hiển thị rõ ràng -->
+        <div class="trigger-preview" *ngIf="triggerConditions.length">
+          <div *ngFor="let trig of triggerConditions; let i = index" class="trigger-item">
+            <span class="type">{{ trig.conditionType }}</span>
+            <span class="logic">({{ trig.logicOperator }})</span>
+            <span class="data">{{ getTriggerLabel(trig) }}</span>
+            <button (click)="editTrigger(i)">✏️</button>
+            <button (click)="removeTrigger(i)">❌</button>
+          </div>
+        </div>
+
+        <div class="bottom-action">
+          <button (click)="nextStep()">✅ Tiếp tục</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
